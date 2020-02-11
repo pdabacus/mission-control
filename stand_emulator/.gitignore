@@ -1,2 +1,5 @@
 .build-stand_emulator
 .push-stand_emulator
+bin/
+a.out
+*.o
