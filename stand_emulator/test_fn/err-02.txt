@@ -1,0 +1,3 @@
+stand_emu [-h -v]
+   -h --help        show this help screen
+   -v --version     show version

@@ -1,5 +1,7 @@
 .build-stand_emulator
 .push-stand_emulator
 bin/
-a.out
+__pycache__
+a.out*
 *.o
+*.pyc

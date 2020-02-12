@@ -24,11 +24,11 @@ int main(int argc, char* argv[]) {
     for (j=1; j<argc; ++j) {
         if (0 == strcmp(argv[j], "-v")) {
             v= true;
-        } else if (0 == strcmp(argv[j], "--v")) {
+        } else if (0 == strcmp(argv[j], "--version")) {
             v= true;
         } else if (0 == strcmp(argv[j], "-h")) {
             h= true;
-        } else if (0 == strcmp(argv[j], "--h")) {
+        } else if (0 == strcmp(argv[j], "--help")) {
             h= true;
         } else {
             fprintf(stderr, "error: unrecognized option '%s'\n", argv[j]);
@@ -73,13 +73,13 @@ int main(int argc, char* argv[]) {
 }
 
 void help() {
-    printf("stand_emu [-h -v]\n");
-    printf("   -h --help        show this help screen\n");
-    printf("   -v --version     show version\n");
+    fprintf(stderr, "stand_emu [-h -v]\n");
+    fprintf(stderr, "   -h --help        show this help screen\n");
+    fprintf(stderr, "   -v --version     show version\n");
 }
 
 void version() {
-    printf("stand_emu %s\n", VERSION);
+    fprintf(stderr, "stand_emu %s\n", VERSION);
 }
 
 void show_help() {
