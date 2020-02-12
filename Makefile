@@ -16,10 +16,13 @@ MAKEFILES               := $(STAND_EMU_MAKE)
 # stages
 .PHONY: all
 .PHONY: build build-$(STAND_EMU)
+.PHONY: push push-$(STAND_EMU)
+.PHONY: test test-$(STAND_EMU)
+.PHONY: cov cov-$(STAND_EMU)
 .PHONY: vars vars-$(STAND_EMU)
 
 # default target
-all: build push
+all: build push test
 
 # include subproject targets
 include $(MAKEFILES)
@@ -29,6 +32,12 @@ build: build-$(STAND_EMU)
 
 # push
 push: push-$(STAND_EMU)
+
+# test
+test: test-$(STAND_EMU)
+
+# coverage
+cov: cov-$(STAND_EMU)
 
 # clean
 clean: | clean-$(STAND_EMU) clean-basic

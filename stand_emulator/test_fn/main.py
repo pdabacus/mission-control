@@ -8,6 +8,7 @@
 import os
 import sys
 import re
+import subprocess
 from test_file import check_prgm_output as check
 from test_file import check_prgm_output as check
 
@@ -59,10 +60,21 @@ for num in nums:
     ret = [f for f in rets if num in f]
     ret = "" if len(ret) != 1 else test+"/"+ret[0]
     cmd = exe
+    cmd_print = cmd
     if arg:
-        cmd += " $(cat %s)" % arg
+        subprocess.Popen("envsubst < %s > tmparg" % arg, shell=True)
+        cmd += " $(cat tmparg)"
+        cmd_print += " $(cat %s)" % arg
     if inp:
-        cmd += " < %s" % inp
+        subprocess.Popen("envsubst < %s > tmpinp" % inp, shell=True)
+        cmd += " < tmpinp"
+        cmd_print += " < %s" % inp
+    if out:
+        subprocess.Popen("envsubst < %s > tmpout" % out, shell=True)
+        out = "tmpout"
+    if err:
+        subprocess.Popen("envsubst < %s > tmperr" % err, shell=True)
+        err = "tmperr"
     if ret:
         f = open(ret)
         ret = int(f.read())
@@ -70,9 +82,13 @@ for num in nums:
     else:
         ret = 0
 
-    print(" * test %2d: %-60s" % (i, cmd), end="", flush=True)
+    print(" * test %2d: %-60s" % (i, cmd_print), end="", flush=True)
     if check(cmd, "", out, err, ret, showErr=True):
         passed += 1
     i += 1
 
 print("passed (%d/%d): %.2f%%" % (passed, total, 100.0*passed/total))
+os.remove("tmparg")
+os.remove("tmpinp")
+os.remove("tmpout")
+os.remove("tmperr")

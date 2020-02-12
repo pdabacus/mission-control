@@ -25,7 +25,7 @@ LABEL \
 
 # dependencies
 USER root
-RUN pacman -Sy --noconfirm gcc make
+RUN pacman -Sy --noconfirm gcc make python gettext
 
 # build
 WORKDIR /app
@@ -33,7 +33,7 @@ COPY /${STAND_EMU}/src/ /app/src/
 COPY /${STAND_EMU}/test/ /app/test/
 COPY /${STAND_EMU}/test_fn/ /app/test_fn/
 COPY /${STAND_EMU}/Makefile /app/Makefile
-RUN make FLAGS="-D VERSION=\\\"${VERSION}\\\" -D DEFAULT_PORT=${DEFAULT_PORT}"
+RUN make FLAGS="-D VERSION=\\\"\${VERSION}\\\" -D DEFAULT_PORT=\${DEFAULT_PORT}"
 
 # run
 EXPOSE $DEFAULT_PORT

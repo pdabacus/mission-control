@@ -5,3 +5,7 @@ __pycache__
 a.out*
 *.o
 *.pyc
+tmparg
+tmpinp
+tmpout
+tmperr

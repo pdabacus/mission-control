@@ -3,7 +3,7 @@
 # make test: compares expected to actual output
 # make cov:  rebuilds project, runs tests and checks line coverage
 
-FLAGS=-D VERSION=\"1.0.0\" -D DEFAULT_PORT=6969
+FLAGS ?= -D VERSION=\"0.0.0\" -D DEFAULT_PORT=6969
 
 BIN             = bin
 MAIN            = src/main.cpp
