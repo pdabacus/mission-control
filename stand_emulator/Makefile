@@ -1,4 +1,4 @@
-# Makefile for a.out
+# Makefile for stand_emulator
 # usage: make [FLAGS=<flags>]
 # make test: compares expected to actual output
 # make cov:  rebuilds project, runs tests and checks line coverage
@@ -49,6 +49,8 @@ COV_NO          = $(patsubst %.cpp,$(BIN)/%.gcno,$(SOURCES)) \
                 $(patsubst %.cpp,$(BIN)/%.gcno,$(TEST_SOURCES)) \
                 $(patsubst %.cpp,$(BIN)/%.gcno,$(TEST_MAIN)) \
 
+.PHONY: all test cov
+
 all:            $(TARGET)
 
 # compile .c source files to objects (.o)
@@ -72,7 +74,7 @@ $(TARGET_TEST): $(OBJ) $(TEST_OBJ) $(TEST_MAIN_OBJ)
 	@echo "binary compiled: '$(TARGET_TEST)'"
 
 # run test executable
-test: $(TARGET) $(TARGET_TEST)
+test: $(TARGET) $(TARGET_TEST) $(TEST_FUNC_PY)
 	@echo "testing:"
 	./$(TARGET_TEST)
 	@echo "functional testing:"
@@ -104,7 +106,6 @@ cov: $(TARGET_COV)
 	@$(GCOV) $(GCOVOPTS) $(COV_DA) | $(GCOVPRNT)
 
 # remove objects and executable
-.PHONY: clean
 clean:
 	$(RM) $(TARGET) $(OBJ) $(MAIN_OBJ)
 	$(RM) $(TARGET_TEST) $(TEST_OBJ) $(TEST_MAIN_OBJ)
