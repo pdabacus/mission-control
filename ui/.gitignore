@@ -1,0 +1,10 @@
+.build-database
+.push-database
+bin/
+__pycache__
+.coverage*
+*.pyc
+tmparg
+tmpinp
+tmpout
+tmperr

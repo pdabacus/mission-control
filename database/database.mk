@@ -1,9 +1,9 @@
 #
-# @file stand_emulator/stand_emu.mk
+# @file database/database.mk
 # @author Pavan Dayal
 #
 
-# stand emulator settings
+# database settings
 DATABASE_DOCKER         := $(DATABASE)/Dockerfile
 DATABASE_SETTINGS       := $(DATABASE)/settings.json
 DATABASE_VERSION        := $(shell jq -r .version $(DATABASE_SETTINGS))
