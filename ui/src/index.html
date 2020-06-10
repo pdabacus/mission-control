@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Liquid Rocketry Mission Control</title>
+    <script src="openmct/openmct.js"></script>
+    <link rel="icon" type="image/png" href="openmct/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="openmct/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="openmct/favicons/favicon-16x16.png" sizes="16x16">
+  </head>
+  <body>
+    <script>
+        const FIVE_MINUTES = 5 * 60 * 1000;
+        const THIRTY_MINUTES = 30 * 60 * 1000;
+
+        openmct.setAssetPath("openmct");
+        ["example/eventGenerator"].forEach(
+            openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+        );
+
+        openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.Espresso());
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.Generator());
+        openmct.install(openmct.plugins.ExampleImagery());
+        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.AutoflowView({
+            type: "telemetry.panel"
+        }));
+        openmct.install(openmct.plugins.DisplayLayout({
+            showAsView: ["summary-widget", "example.imagery"]
+        }));
+        openmct.install(openmct.plugins.Conductor({
+            menuOptions: [
+                {
+                    name: "Fixed",
+                    timeSystem: "utc",
+                    bounds: {
+                        start: Date.now() - THIRTY_MINUTES,
+                        end: Date.now()
+                    }
+                },
+                {
+                    name: "Realtime",
+                    timeSystem: "utc",
+                    clock: "local",
+                    clockOffsets: {
+                        start: - THIRTY_MINUTES,
+                        end: FIVE_MINUTES
+                    }
+                }
+            ]
+        }));
+        openmct.install(openmct.plugins.SummaryWidget());
+        openmct.install(openmct.plugins.Notebook());
+        openmct.install(openmct.plugins.LADTable());
+        openmct.install(openmct.plugins.Filters(
+            ["table", "telemetry.plot.overlay"]
+        ));
+        openmct.install(openmct.plugins.ObjectMigration());
+        openmct.install(openmct.plugins.ClearData(
+            ["table", "telemetry.plot.overlay", "telemetry.plot.stacked"]
+        ));
+        openmct.start();
+    </script>
+  </body>
+</html>

@@ -25,7 +25,8 @@ LABEL \
 
 # dependencies
 USER root
-RUN pacman -Sy --noconfirm make python gettext
+RUN pacman -Sy --noconfirm make python gettext \
+    nodejs npm git
 
 # build
 WORKDIR /app
@@ -33,7 +34,8 @@ COPY /${UI}/src/ /app/src/
 COPY /${UI}/test/ /app/test/
 COPY /${UI}/test_fn/ /app/test_fn/
 COPY /${UI}/Makefile /app/Makefile
+RUN make build
 
 # run
 EXPOSE $DEFAULT_PORT
-CMD ["node", "/app/src/index.js"]
+CMD ["make", "run"]
