@@ -8,9 +8,6 @@ ARG BASE_IMG
 FROM $BASE_IMG
 
 # args
-ARG UI
-ENV UI $UI
-
 ARG VERSION
 ENV VERSION $VERSION
 
@@ -25,15 +22,17 @@ LABEL \
 
 # dependencies
 USER root
-RUN pacman -Sy --noconfirm make python gettext \
-    nodejs npm git
+RUN pacman -Sy --noconfirm make python gettext jq \
+    nodejs npm git libnghttp2
 
 # build
 WORKDIR /app
-COPY /${UI}/src/ /app/src/
-COPY /${UI}/test/ /app/test/
-COPY /${UI}/test_fn/ /app/test_fn/
-COPY /${UI}/Makefile /app/Makefile
+COPY /src/ /app/src/
+COPY /res/ /app/res/
+COPY /test/ /app/test/
+COPY /test_fn/ /app/test_fn/
+COPY /Makefile /app/Makefile
+COPY /settings.json /app/settings.json
 RUN make build
 
 # run

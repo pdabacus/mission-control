@@ -1,0 +1,5 @@
+src/openmct
+src/openmct/**/*
+src/node_modules
+src/node_modules/**/*
+src/package-lock.json

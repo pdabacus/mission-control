@@ -8,9 +8,6 @@ ARG BASE_IMG
 FROM $BASE_IMG
 
 # args
-ARG STAND_EMU
-ENV STAND_EMU $STAND_EMU
-
 ARG VERSION
 ENV VERSION $VERSION
 
@@ -25,15 +22,17 @@ LABEL \
 
 # dependencies
 USER root
-RUN pacman -Sy --noconfirm gcc make python gettext
+RUN pacman -Sy --noconfirm make python gettext jq \
+    gcc
 
 # build
 WORKDIR /app
-COPY /${STAND_EMU}/src/ /app/src/
-COPY /${STAND_EMU}/test/ /app/test/
-COPY /${STAND_EMU}/test_fn/ /app/test_fn/
-COPY /${STAND_EMU}/Makefile /app/Makefile
-RUN make FLAGS="-D VERSION=\\\"\${VERSION}\\\" -D DEFAULT_PORT=\${DEFAULT_PORT}"
+COPY /src/ /app/src/
+COPY /test/ /app/test/
+COPY /test_fn/ /app/test_fn/
+COPY /Makefile /app/Makefile
+COPY /settings.json /app/settings.json
+RUN make
 
 # run
 EXPOSE $DEFAULT_PORT

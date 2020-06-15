@@ -1,6 +1,6 @@
-.build-database
-.push-database
-bin/
+.build-ui
+.push-ui
+.build-npm
 __pycache__
 .coverage*
 *.pyc

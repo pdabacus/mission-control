@@ -1,9 +1,13 @@
 # Makefile for database
-# usage: make [FLAGS=<flags>]
+# usage: make [DEFAULT_PORT=<num> run]
 # make test: compares expected to actual output
 # make cov:  runs tests and checks line coverage
 
-FLAGS ?= -D VERSION=\"0.0.0\" -D DEFAULT_PORT=42069
+SETTINGS        = settings.json
+VERSION         ?= $(shell jq -r .version $(SETTINGS))
+DEFAULT_PORT    ?= $(shell jq -r .port $(SETTINGS))
+URL_CERT        ?= $(addprefix ../, $(shell jq -r .cert $(SETTINGS)))
+URL_PRIV        ?= $(addprefix ../, $(shell jq -r .priv $(SETTINGS)))
 
 MAIN            = src/database.py
 TEST_MAIN       = test/main.py
@@ -19,6 +23,13 @@ PYCOV           = coverage
 .PHONY: all test cov
 
 all:
+
+run:
+	cd $(dir $(MAIN)); \
+		FLASK_ENV=development $(PYTHON) $(notdir $(MAIN)) \
+		--host 0.0.0.0 --port $(DEFAULT_PORT) \
+		--cert "$(URL_CERT)" \
+		--priv "$(URL_PRIV)"
 
 # run tests and functional tests
 test: $(TEST_MAIN) $(TEST_SRC) $(TEST_FUNC)

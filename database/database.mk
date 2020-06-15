@@ -14,7 +14,8 @@ DATABASE_SRC            := $(shell find $(DATABASE)/src -type f)
 DATABASE_TEST           := $(shell find $(DATABASE)/test -type f)
 DATABASE_TEST_FN        := $(shell find $(DATABASE)/test_fn -type f)
 DATABASE_DEPS           := $(DATABASE_DOCKER) $(DATABASE_SETTINGS) \
-                        $(DATABASE_SRC) $(DATABASE_TEST) $(DATABASE_TEST_FN)
+                        $(DATABASE)/Makefile $(DATABASE_SRC) \
+                        $(DATABASE_TEST) $(DATABASE_TEST_FN)
 
 # build
 build-$(DATABASE): $(DATABASE)/.build-$(DATABASE)
@@ -24,10 +25,9 @@ $(DATABASE)/.build-$(DATABASE): $(DATABASE_DEPS)
 	@echo "building $(DATABASE) with $(DATABASE_DOCKER)"
 	$(DOCKER) build --pull -t $(DATABASE_IMAGE) \
 		-f	$(DATABASE_DOCKER)	\
-		--build-arg DATABASE="${DATABASE}" \
 		--build-arg VERSION="${DATABASE_VERSION}" \
 		--build-arg BASE_IMG="${DATABASE_BASE_IMG}" \
-		--build-arg DEFAULT_PORT="${DATABASE_DEFAULT_PORT}" .
+		--build-arg DEFAULT_PORT="${DATABASE_DEFAULT_PORT}" $(DATABASE)
 	touch $(DATABASE)/.build-$(DATABASE)
 
 # push
@@ -39,19 +39,20 @@ $(DATABASE)/.push-$(DATABASE): $(DATABASE)/.build-$(DATABASE)
 	#$(DOCKER) push $(DATABASE_IMAGE)
 	touch $(DATABASE)/.push-$(DATABASE)
 
+# run
+run-$(DATABASE): $(DATABASE)/.push-$(DATABASE)
+	@echo "running $(DATABASE) on $(DATABASE_IMAGE)"
+	$(DOCKER) run --net=host -it $(DATABASE_IMAGE) make run
+
 # test
 test-$(DATABASE): $(DATABASE)/.push-$(DATABASE)
 	@echo "testing $(DATABASE) on $(DATABASE_IMAGE)"
-	$(DOCKER) run -it $(DATABASE_IMAGE) make test FLAGS=" \
-		-D VERSION=\\\"\$$\$$VERSION\\\" \
-		-D DEFAULT_PORT=\$$\$$DEFAULT_PORT"
+	$(DOCKER) run -it $(DATABASE_IMAGE) make test
 
 # coverage
 cov-$(DATABASE): $(DATABASE)/.push-$(DATABASE)
 	@echo "testing $(DATABASE) with coverage on $(DATABASE_IMAGE)"
-	$(DOCKER) run -it $(DATABASE_IMAGE) make cov FLAGS=" \
-		-D VERSION=\\\"\$$\$${VERSION}\\\" \
-		-D DEFAULT_PORT=\$$\$${DEFAULT_PORT}"
+	$(DOCKER) run -it $(DATABASE_IMAGE) make cov
 
 # clean
 clean-$(DATABASE):

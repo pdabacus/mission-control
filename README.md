@@ -6,14 +6,17 @@ consists of 3 subprojects: *Stand Emulator*, *Database*, and *UI*
 ## Stand Emulator
  * emulate data coming from sensors and deliver that data to the Database
  * accept commands from the UI
+ * launch with `make run-stand_emulator`
 
 ## Database
  * store all data coming in from the Stand Emulator
  * provide methods of accessing and filtering the data to the UI
+ * launch with `make run-database`
 
 ## UI
  * visualize the data from the database using [openmct](https://nasa.github.io/openmct/)
  * provide commands to control the Stand Emulator
+ * launch with `make run-ui`
 
 ---
 

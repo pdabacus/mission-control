@@ -1,5 +1,0 @@
-{
-    "openmct": "https://github.com/nasa/openmct.git",
-    "cert": "/etc/httpd/conf/ssl/fullchain.crt",
-    "priv": "/etc/httpd/conf/ssl/priv.key"
-}

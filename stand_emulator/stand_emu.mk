@@ -14,7 +14,8 @@ STAND_EMU_SRC           := $(shell find $(STAND_EMU)/src -type f)
 STAND_EMU_TEST          := $(shell find $(STAND_EMU)/test -type f)
 STAND_EMU_TEST_FN       := $(shell find $(STAND_EMU)/test_fn -type f)
 STAND_EMU_DEPS          := $(STAND_EMU_DOCKER) $(STAND_EMU_SETTINGS) \
-                        $(STAND_EMU_SRC) $(STAND_EMU_TEST) $(STAND_EMU_TEST_FN)
+                        $(STAND_EMU)/Makefile $(STAND_EMU_SRC) \
+                        $(STAND_EMU_TEST) $(STAND_EMU_TEST_FN)
 
 # build
 build-$(STAND_EMU): $(STAND_EMU)/.build-$(STAND_EMU)
@@ -24,10 +25,9 @@ $(STAND_EMU)/.build-$(STAND_EMU): $(STAND_EMU_DEPS)
 	@echo "building $(STAND_EMU) with $(STAND_EMU_DOCKER)"
 	$(DOCKER) build --pull -t $(STAND_EMU_IMAGE) \
 		-f	$(STAND_EMU_DOCKER)	\
-		--build-arg STAND_EMU="${STAND_EMU}" \
 		--build-arg VERSION="${STAND_EMU_VERSION}" \
 		--build-arg BASE_IMG="${STAND_EMU_BASE_IMG}" \
-		--build-arg DEFAULT_PORT="${STAND_EMU_DEFAULT_PORT}" .
+		--build-arg DEFAULT_PORT="${STAND_EMU_DEFAULT_PORT}" $(STAND_EMU)
 	touch $(STAND_EMU)/.build-$(STAND_EMU)
 
 # push
@@ -40,18 +40,19 @@ $(STAND_EMU)/.push-$(STAND_EMU): $(STAND_EMU)/.build-$(STAND_EMU)
 	touch $(STAND_EMU)/.push-$(STAND_EMU)
 
 # test
+run-$(STAND_EMU): $(STAND_EMU)/.push-$(STAND_EMU)
+	@echo "running $(STAND_EMU) on $(STAND_EMU_IMAGE)"
+	$(DOCKER) run --net=host -it $(STAND_EMU_IMAGE) make run
+
+# test
 test-$(STAND_EMU): $(STAND_EMU)/.push-$(STAND_EMU)
 	@echo "testing $(STAND_EMU) on $(STAND_EMU_IMAGE)"
-	$(DOCKER) run -it $(STAND_EMU_IMAGE) make test FLAGS=" \
-		-D VERSION=\\\"\$$\$$VERSION\\\" \
-		-D DEFAULT_PORT=\$$\$$DEFAULT_PORT"
+	$(DOCKER) run -it $(STAND_EMU_IMAGE) make test
 
 # coverage
 cov-$(STAND_EMU): $(STAND_EMU)/.push-$(STAND_EMU)
 	@echo "testing $(STAND_EMU) with coverage on $(STAND_EMU_IMAGE)"
-	$(DOCKER) run -it $(STAND_EMU_IMAGE) make cov FLAGS=" \
-		-D VERSION=\\\"\$$\$${VERSION}\\\" \
-		-D DEFAULT_PORT=\$$\$${DEFAULT_PORT}"
+	$(DOCKER) run -it $(STAND_EMU_IMAGE) make cov
 
 # clean
 clean-$(STAND_EMU):

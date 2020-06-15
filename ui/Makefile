@@ -1,20 +1,20 @@
 # Makefile for ui
-# usage: make [FLAGS=<flags>]
+# usage: make [DEFAULT_PORT=<num> run]
 # make test: compares expected to actual output
 # make cov:  runs tests and checks line coverage
 
-DEFAULT_PORT ?= 8080
+SETTINGS        = settings.json
+VERSION         ?= $(shell jq -r .version $(SETTINGS))
+DEFAULT_PORT    ?= $(shell jq -r .port $(SETTINGS))
+URL_OPENMCT     ?= $(shell jq -r .openmct $(SETTINGS))
+URL_CERT        ?= $(addprefix ../, $(shell jq -r .cert $(SETTINGS)))
+URL_PRIV        ?= $(addprefix ../, $(shell jq -r .priv $(SETTINGS)))
 
 MAIN            = src/app.js
 TEST_MAIN       = test/main.js
 TEST_SRC        = test/test_asdf.js
 TEST_FUNC       = test_fn/main.py
 PY_CACHE        = test_fn/__pycache__
-
-URLS            = src/urls.json
-URL_OPENMCT     = $(shell jq -r .openmct $(URLS))
-URL_CERT        = $(shell jq -r .cert $(URLS))
-URL_PRIV        = $(shell jq -r .priv $(URLS))
 
 MKDIR           = mkdir -p
 PYTHON          = python3
@@ -39,6 +39,7 @@ build: .build-npm
 		git clone --depth=1 $(URL_OPENMCT); \
 		pushd openmct; \
 		$(NPM) install; \
+		[ ! -d dist ] && $(NPM) run build:prod; \
 		popd
 	@touch .build-npm
 

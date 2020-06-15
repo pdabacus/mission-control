@@ -3,7 +3,11 @@
 # make test: compares expected to actual output
 # make cov:  rebuilds project, runs tests and checks line coverage
 
-FLAGS ?= -D VERSION=\"0.0.0\" -D DEFAULT_PORT=6969
+SETTINGS        = settings.json
+VERSION         ?= $(shell jq -r .version $(SETTINGS))
+DEFAULT_PORT    ?= $(shell jq -r .port $(SETTINGS))
+
+FLAGS ?= -D VERSION=\"$(VERSION)\" -D DEFAULT_PORT=$(DEFAULT_PORT)
 
 BIN             = bin
 MAIN            = src/main.cpp
@@ -51,7 +55,10 @@ COV_NO          = $(patsubst %.cpp,$(BIN)/%.gcno,$(SOURCES)) \
 
 .PHONY: all test cov
 
-all:            $(TARGET)
+all: $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
 
 # compile .c source files to objects (.o)
 $(BIN)/%.o: %.c $(HEADERS) $(TEST_HEADERS)

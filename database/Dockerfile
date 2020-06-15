@@ -8,9 +8,6 @@ ARG BASE_IMG
 FROM $BASE_IMG
 
 # args
-ARG DATABASE
-ENV DATABASE $DATABASE
-
 ARG VERSION
 ENV VERSION $VERSION
 
@@ -25,16 +22,18 @@ LABEL \
 
 # dependencies
 USER root
-RUN pacman -Sy --noconfirm make python gettext \
+RUN pacman -Sy --noconfirm make python gettext jq \
     python-setuptools python-coverage python-flask
 
 # build
 WORKDIR /app
-COPY /${DATABASE}/src/ /app/src/
-COPY /${DATABASE}/test/ /app/test/
-COPY /${DATABASE}/test_fn/ /app/test_fn/
-COPY /${DATABASE}/Makefile /app/Makefile
+COPY /src/ /app/src/
+COPY /res/ /app/res/
+COPY /test/ /app/test/
+COPY /test_fn/ /app/test_fn/
+COPY /Makefile /app/Makefile
+COPY /settings.json /app/settings.json
 
 # run
 EXPOSE $DEFAULT_PORT
-CMD ["python3", "/app/src/database.py"]
+CMD ["make", "run"]

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-
 """
  @file src/database.py
  @author Pavan Dayal
 """
 
+import argparse
 from flask import Flask
 app = Flask(__name__)
 
@@ -23,3 +23,27 @@ def add_data():
 
 def foo(a):
     return a + 1
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="run sensor database")
+    parser.add_argument("--host", default="0.0.0.0", help="host to bind to")
+    parser.add_argument("--port", default=8080, type=int, help="port to bind to")
+    parser.add_argument("--cert", default=None, help="https cert")
+    parser.add_argument("--priv", default=None, help="https priv")
+    args = parser.parse_args()
+    #host = "0.0.0.0"
+    #port = 8080
+    #cert = "../ui/res/chain.crt"
+    #priv = "../ui/res/priv.key"
+    if args.cert and args.priv:
+        app.run(
+            host=args.host,
+            port=args.port,
+            ssl_context=(args.cert, args.priv)
+        )
+    else:
+        app.run(
+            host=args.host,
+            port=args.port
+        )
+

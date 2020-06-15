@@ -10,10 +10,10 @@ UI_VERSION              := $(shell jq -r .version $(UI_SETTINGS))
 UI_DEFAULT_PORT         := $(shell jq -r .port $(UI_SETTINGS))
 UI_BASE_IMG             := $(DOCKER_REPO)/archlinux:latest
 UI_IMAGE                := $(REPO)/$(UI):$(UI_VERSION)
-UI_SRC                  := $(shell find $(UI)/src -type f -maxdepth 1)
+UI_SRC                  := $(shell find $(UI)/src -maxdepth 1 -type f)
 UI_TEST                 := $(shell find $(UI)/test -type f)
 UI_TEST_FN              := $(shell find $(UI)/test_fn -type f)
-UI_DEPS                 := $(UI_DOCKER) $(UI_SETTINGS) \
+UI_DEPS                 := $(UI_DOCKER) $(UI_SETTINGS) $(UI)/Makefile \
                               $(UI_SRC) $(UI_TEST) $(UI_TEST_FN)
 
 # build
@@ -24,10 +24,9 @@ $(UI)/.build-$(UI): $(UI_DEPS)
 	@echo "building $(UI) with $(UI_DOCKER)"
 	$(DOCKER) build --pull -t $(UI_IMAGE) \
 		-f	$(UI_DOCKER)	\
-		--build-arg UI="${UI}" \
 		--build-arg VERSION="${UI_VERSION}" \
 		--build-arg BASE_IMG="${UI_BASE_IMG}" \
-		--build-arg DEFAULT_PORT="${UI_DEFAULT_PORT}" .
+		--build-arg DEFAULT_PORT="${UI_DEFAULT_PORT}" $(UI)
 	touch $(UI)/.build-$(UI)
 
 # push
@@ -39,19 +38,20 @@ $(UI)/.push-$(UI): $(UI)/.build-$(UI)
 	#$(DOCKER) push $(UI_IMAGE)
 	touch $(UI)/.push-$(UI)
 
+# run
+run-$(UI): $(UI)/.push-$(UI)
+	@echo "running $(UI) on $(UI_IMAGE)"
+	$(DOCKER) run --net=host -it $(UI_IMAGE) make run
+
 # test
 test-$(UI): $(UI)/.push-$(UI)
 	@echo "testing $(UI) on $(UI_IMAGE)"
-	$(DOCKER) run -it $(UI_IMAGE) make test FLAGS=" \
-		-D VERSION=\\\"\$$\$$VERSION\\\" \
-		-D DEFAULT_PORT=\$$\$$DEFAULT_PORT"
+	$(DOCKER) run -it $(UI_IMAGE) make test
 
 # coverage
 cov-$(UI): $(UI)/.push-$(UI)
 	@echo "testing $(UI) with coverage on $(UI_IMAGE)"
-	$(DOCKER) run -it $(UI_IMAGE) make cov FLAGS=" \
-		-D VERSION=\\\"\$$\$${VERSION}\\\" \
-		-D DEFAULT_PORT=\$$\$${DEFAULT_PORT}"
+	$(DOCKER) run -it $(UI_IMAGE) make cov
 
 # clean
 clean-$(UI):

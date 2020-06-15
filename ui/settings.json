@@ -1,4 +1,7 @@
 {
     "version": "1.0.0",
-    "port": 8080
+    "port": 4443,
+    "openmct": "https://github.com/nasa/openmct.git",
+    "cert": "res/chain.crt",
+    "priv": "res/priv.key"
 }
