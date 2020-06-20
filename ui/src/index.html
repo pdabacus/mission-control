@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Liquid Rocketry Mission Control</title>
-    <script src="openmct/openmct.js"></script>
     <link rel="icon" type="image/png" href="openmct/favicons/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/png" href="openmct/favicons/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="openmct/favicons/favicon-16x16.png" sizes="16x16">
+    <script src="openmct/openmct.js"></script>
+    <script src="plugins/clock.js"></script>
+    <script src="plugins/hello.js"></script>
   </head>
   <body>
     <script>
@@ -16,6 +18,7 @@
         const THIRTY_MINUTES = 30 * 60 * 1000;
 
         openmct.setAssetPath("openmct");
+
         ["example/eventGenerator"].forEach(
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
@@ -63,6 +66,12 @@
         openmct.install(openmct.plugins.ClearData(
             ["table", "telemetry.plot.overlay", "telemetry.plot.stacked"]
         ));
+
+        // load non-example plugins
+        openmct.install(Clock());
+        openmct.install(Hello());
+
+        // start interface
         openmct.start();
     </script>
   </body>

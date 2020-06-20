@@ -61,6 +61,11 @@ app.use("/openmct", express.static(
     path.join(__dirname, "openmct/dist")
 ));
 
+// serve plugins
+app.use("/plugins", express.static(
+    path.join(__dirname, "plugins")
+));
+
 // give index.html
 app.get("/", function(req, res) {
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
