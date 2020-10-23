@@ -42,18 +42,35 @@ function _date() {
     return s;
 }
 
+function validURL(str) {
+    var pattern = new RegExp(
+        '^(https?:\\/\\/)?' +               // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +     // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +        // query string
+        '(\\#[-a-z\\d_]*)?$','i'            // fragment locator
+    );
+    return !!pattern.test(str);
+}
+
 // proxy thru webserver (https://0.0.0.0:8080/proxyUrl?url=https://google.com)
 app.use("/proxy", function proxyRequest(req, res, next) {
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log("%s: proxying (%s) to: %s", _date(), ip, req.query.url);
-    req.pipe(
-        request({
-            url: req.query.url,
-            strictSSL: true
-        }, function(err, resp, body) {
-                next(err);
-        })
-    ).pipe(res);
+    if (validURL(req.query.url)) {
+        req.pipe(
+            request({
+                url: req.query.url,
+                strictSSL: false,
+                rejectUnhauthorized: false
+            }, function(err, resp, body) {
+                    next(err);
+            })
+        ).pipe(res);
+    } else {
+        res.status(404).send("error: bad url");
+    }
 });
 
 // serve openmct.js and css static stuff

@@ -1,24 +1,28 @@
 /**
- * item for greeting user in the interface
+ * notebook for greeting user and configuring settings
  * @file src/plugins/hello.js
  * @author Pavan Dayal
  */
 
 var settings = {
-    database_url: window.location.protocol + window.location.hostname + ":xxxx",
-    enable_database_listener: function() {
+    got_database_url: false,
+    database_url: window.location.protocol + "//" + window.location.hostname,
+    enable_database_url_listener: function() {
         setTimeout(function() {
             console.log("listening for settings.database_url");
             $("#entry6-database-url").on("keyup", function() {
                 settings.database_url = $("#entry6-database-url").text();
                 console.log("settings.database_url = " + settings.database_url);
+                setTimeout(function(){
+                    settings.got_database_url = true;
+                }, 2000);
             });
         }, 1000);
     }
 }
 
 function welcome_config() {
-    var url = window.location.protocol + window.location.host + "/"
+    var url = window.location.protocol + "//" + window.location.host + "/"
     return {
         defaultSort: "oldest",
         pageTitle: "Page",
@@ -68,7 +72,11 @@ function welcome_config() {
             {
                 id: "entry5",
                 createdOn: 1580608922005,
-                text: "database url"
+                text: "database url:\n"
+                    + " * url to reach the database webapi\n"
+                    + " * note: if database isn't reachable from client, then"
+                    + " you can proxy through the mission control server:\n"
+                    + "   " + url + "proxy/?url=https://localhost:42069"
             },
             {
                 id: "entry6-database-url",
@@ -77,12 +85,12 @@ function welcome_config() {
             },
             {
                 id: "entry6",
-                createdOn: 1580608922004,
+                createdOn: 1580608922006,
                 text: "\n"
             },
             {
                 id: "entry7",
-                createdOn: 1580608922004,
+                createdOn: 1580608922007,
                 text: "================================\n"
             }
         ]
@@ -109,18 +117,18 @@ function Hello() {
                         classList: ["is-notebook-default"],
                         configuration: welcome_config()
                     }).then(value=>{
-                        settings.enable_database_listener();
+                        settings.enable_database_url_listener();
                         return value;
                     });
                 }
             }
         });
 
-        var db_url = window.location.protocol + window.location.host;
+        var db_url = window.location.protocol + "//" + window.location.host;
         if (window.location.port) {
-            db_url = db_url.replace(window.location.port, "42069");
+            db_url = db_url.replace(window.location.port, "xxxx");
         } else {
-            db_url = db_url + ":42069";
+            db_url = db_url + ":xxxx";
         }
         settings.database_url = db_url;
 

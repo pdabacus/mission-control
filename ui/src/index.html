@@ -11,6 +11,7 @@
     <script src="openmct/openmct.js"></script>
     <script src="plugins/clock.js"></script>
     <script src="plugins/hello.js"></script>
+    <script src="plugins/sensordata.js"></script>
   </head>
   <body>
     <script>
@@ -70,6 +71,7 @@
         // load non-example plugins
         openmct.install(Clock());
         openmct.install(Hello());
+        openmct.install(SensorData());
 
         // start interface
         openmct.start();

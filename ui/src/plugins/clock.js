@@ -1,5 +1,5 @@
 /**
- * item for greeting user in the interface
+ * basic clock nothing else
  * @file src/plugins/clock.js
  * @author Pavan Dayal
  */

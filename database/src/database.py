@@ -8,9 +8,38 @@ import argparse
 from flask import Flask
 app = Flask(__name__)
 
+# TODO create interface to manage adding/removing/renaming sensors to sql db
+sensors = [
+    {
+        "name" : "Altitude",
+        "key" : "sensor-altitude",
+        "identifier": {
+            "namespace" : "liquidrocketry.sensors",
+            "key": "sensor-altitude"
+        }
+    },
+    {
+        "name" : "Fuel",
+        "key" : "sensor-fuel",
+        "identifier": {
+            "namespace" : "liquidrocketry.sensors",
+            "key": "sensor-fuel"
+        }
+    }
+]
+
 @app.route("/")
 def server_status():
     return {"status": "ok"}
+
+@app.route("/sensors")
+def get_sensors():
+    return {
+        "status": "ok",
+        "data": {
+            "sensors": sensors
+        }
+    }
 
 @app.route("/get")
 def get_data():
