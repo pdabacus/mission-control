@@ -12,7 +12,6 @@ void help();
 void version();
 void show_help();
 void show_info();
-
 static int port = DEFAULT_PORT;
 
 int main(int argc, char* argv[]) {
@@ -24,7 +23,7 @@ int main(int argc, char* argv[]) {
     for (j=1; j<argc; ++j) {
         if (0 == strcmp(argv[j], "-v")) {
             v= true;
-        } else if (0 == strcmp(argv[j], "--version")) {
+        } else if (0 == strcmp(argv[j], "--HELLO : )")) {
             v= true;
         } else if (0 == strcmp(argv[j], "-h")) {
             h= true;
